@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>九九マーケット</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:14px;background:#e8e1d2;color:#293b35;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif}
+#game{max-width:480px;margin:auto;text-align:center}
+header{padding:10px 0 18px}
+.shop-sign{display:inline-block;background:#bd3930;color:white;border:4px solid #fff0c8;border-radius:12px;padding:8px 25px;font-size:30px;font-weight:900;box-shadow:0 4px 0 #79251f}
+.subtitle{margin-top:12px;font-weight:900;font-size:16px}
+.panel{background:#fffaf0;border:3px solid #b6a88e;border-radius:20px;padding:18px 14px;box-shadow:0 5px 0 #b6a88e}
+[hidden]{display:none!important}
+button{border:none;cursor:pointer;touch-action:manipulation;font-weight:900;font-family:inherit;-webkit-tap-highlight-color:transparent}
+button:active{transform:translateY(2px)}
+.menu-icon{font-size:48px;margin:4px}
+h2{font-size:23px;margin:8px 0 12px}
+.mode{display:block;width:100%;margin:12px 0;padding:16px 8px;border-radius:12px;background:#e6b94f;color:#463315;font-size:18px;box-shadow:0 4px 0 #a67d2e}
+.mode:nth-of-type(2){background:#83c9d5;box-shadow:0 4px 0 #468c98}
+.mode:nth-of-type(3){background:#91c98d;box-shadow:0 4px 0 #568a52}
+.rules{background:#f1ead9;border-radius:12px;padding:12px;margin-top:20px;font-size:14px;line-height:1.5}
+.rules p{margin:5px 0}
+.register{background:#d4d7c7;border:5px solid #747d6e;border-radius:18px;padding:10px;box-shadow:inset 0 0 0 2px #eef0e5}
+.register-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:900;padding:3px 2px 10px;color:#354438}
+.live-dot{color:#288b50}
+.screen{background:#183c35;color:#a7f5b4;border:5px solid #59685b;border-radius:10px;padding:13px 10px 10px;text-align:right;box-shadow:inset 0 0 10px #071b16}
+.screen-label{font-size:13px;text-align:left;color:#d3f0d5}
+.sales{font-family:monospace;font-size:clamp(38px,11vw,54px);font-weight:900;letter-spacing:-2px;white-space:nowrap;overflow:hidden}
+.sales small{font-size:19px;margin-left:5px}
+.screen-bottom{display:flex;justify-content:space-between;border-top:1px dashed #8bc89a;padding-top:8px;margin-top:5px;font-size:13px;color:#d3f0d5}
+.screen-bottom b{font-size:20px;color:#fff}
+.register-body{padding:12px 2px 3px}
+.receipt{background:#fffef7;color:#333;padding:12px;border-radius:4px;box-shadow:0 2px 4px #0002;text-align:left}
+.receipt-title{text-align:center;font-weight:900;padding-bottom:8px;border-bottom:1px dashed #777;margin-bottom:8px}
+.receipt-line{font-size:13px;padding:3px 0}
+.receipt-question{text-align:center;font-size:clamp(35px,10vw,48px);font-weight:900;padding:8px 0;color:#253c32}
+#feedback{text-align:center;font-weight:900;color:#23814b;min-height:25px;font-size:14px}
+.input-display{display:flex;align-items:center;justify-content:space-between;background:#263c35;color:white;padding:8px 15px;margin:12px 0;border-radius:8px;font-weight:bold}
+#answer{background:#c8e7bb;color:#173d25;min-width:90px;min-height:40px;border-radius:5px;font-size:27px;font-family:monospace;text-align:right;padding:3px 10px;letter-spacing:3px}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:3px 0}
+.digit{padding:13px 5px;border-radius:8px;background:linear-gradient(#fff,#dce2d8);color:#27372d;font-size:25px;box-shadow:0 4px 0 #899286}
+.key-clear,.key-back{padding:12px 5px;border-radius:8px;font-size:17px;color:white;background:#d47742;box-shadow:0 4px 0 #95502c}
+.key-back{background:#71828a;box-shadow:0 4px 0 #46545a}
+.enter-button{width:100%;min-height:60px;margin-top:13px;padding:17px;border-radius:9px;background:#d34c38;color:white;font-size:22px;box-shadow:0 5px 0 #8d2d22}
+.result-receipt{background:white;padding:18px 14px;margin:15px 0;box-shadow:0 3px 5px #0002}
+.total{font-size:clamp(38px,11vw,52px);font-weight:900;color:#bd3930;margin:14px 0;white-space:nowrap}
+.receipt-end{border-top:1px dashed #777;margin-top:12px;padding-top:10px;letter-spacing:3px}
+.answer-button{background:#d34c38;color:white;padding:14px;border-radius:10px;font-size:18px}
+.utility{background:#77867c;color:white;padding:13px;border-radius:10px;font-size:15px}
+.wide{display:block;width:100%;margin-top:12px}
+@media(max-width:380px){body{padding:8px}.panel{padding:14px 10px}.register{padding:7px}.digit{padding:11px 4px}}
+
+/* iPadなどの横向き画面 */
+@media (orientation:landscape) and (min-width:700px){
+  body{padding:6px 12px}
+  #game{max-width:1100px}
+  header{padding:2px 0 7px}
+  .shop-sign{font-size:23px;padding:4px 20px;border-width:3px;border-radius:9px;box-shadow:0 3px 0 #79251f}
+  .subtitle{font-size:12px;margin-top:5px}
+  .panel{padding:10px 14px;border-radius:15px}
+  #menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px;align-items:center}
+  #menu[hidden]{display:none!important}
+  #menu .menu-icon,#menu h2,#menu>p,#menu .rules{grid-column:1/-1}
+  #menu .menu-icon{font-size:30px;margin:0}
+  #menu h2{font-size:19px;margin:0}
+  #menu>p{margin:0 0 3px;font-size:13px}
+  .mode{margin:2px 0;padding:clamp(10px,2vh,16px) 6px;font-size:clamp(15px,2.5vh,18px)}
+  .rules{margin-top:3px;padding:7px;font-size:12px;line-height:1.35}
+  .rules p{margin:2px 0}
+  #play.panel{padding:8px 12px}
+  .register{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 12px;padding:7px;border-width:4px}
+  .register-top{grid-column:1/-1;padding:0 2px 3px;font-size:11px}
+  .screen{grid-column:1/-1;padding:7px 10px 6px;border-width:3px}
+  .screen-label{font-size:11px}
+  .sales{font-size:clamp(30px,6vh,46px)}
+  .sales small{font-size:15px}
+  .screen-bottom{padding-top:4px;margin-top:2px;font-size:11px}
+  .screen-bottom b{font-size:16px}
+  .register-body{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);grid-template-rows:auto auto auto;gap:6px 10px;padding:2px 0 0;align-items:stretch}
+  .receipt{grid-column:1;grid-row:1;padding:7px 9px}
+  .receipt-title{padding-bottom:4px;margin-bottom:4px;font-size:12px}
+  .receipt-line{font-size:11px;padding:2px 0}
+  .receipt-question{font-size:clamp(28px,5vh,42px);padding:3px 0}
+  #feedback{min-height:18px;font-size:11px}
+  .input-display{grid-column:1;grid-row:2;margin:0;padding:5px 9px;font-size:12px}
+  #answer{min-width:65px;min-height:31px;font-size:22px}
+  .keypad{grid-column:2;grid-row:1/3;gap:6px;padding:0;grid-template-rows:repeat(4,minmax(0,1fr))}
+  .digit{padding:clamp(5px,1.3vh,10px) 4px;font-size:clamp(19px,3vh,25px);box-shadow:0 3px 0 #899286}
+  .key-clear,.key-back{padding:5px 3px;font-size:clamp(12px,2vh,16px);box-shadow:0 3px 0 #95502c}
+  .key-back{box-shadow:0 3px 0 #46545a}
+  .enter-button{grid-column:1/-1;grid-row:3;margin:2px 0 3px;min-height:58px;padding:clamp(12px,2vh,17px);font-size:clamp(19px,2.8vh,23px);box-shadow:0 4px 0 #8d2d22}
+  #result .menu-icon{font-size:34px;margin:0}
+  #result h2{font-size:20px;margin:2px 0 6px}
+  .result-receipt{padding:9px;margin:6px 0}
+  .total{font-size:clamp(34px,6vh,48px);margin:5px 0}
+  .wide{margin-top:7px;padding:9px}
+}
+
+</style>
+</head>
+<body>
+<div id="game">
+<header><div class="shop-sign">九九マーケット</div><div class="subtitle">めざせ！うりあげチャンピオン！</div></header>
+<section id="menu" class="panel">
+<div class="menu-icon">🛒</div><h2>いらっしゃいませ！</h2><p>ゲームのコースをえらんでね</p>
+<button class="mode" data-mode="forward">① じゅんばんコース</button>
+<button class="mode" data-mode="reverse">② ぎゃくじゅんコース</button>
+<button class="mode" data-mode="random">③ ランダムコース</button>
+<div class="rules"><b>おみせのルール</b><p>せいかいすると、うりあげアップ！</p><p>5もんれんぞくせいかいでボーナス1びょう！</p><p>まちがえても、せいかいするまでつぎにすすまないよ。</p></div>
+</section>
+<section id="play" class="panel" hidden>
+<div class="register">
+<div class="register-top"><span>九九マーケット レジ</span><span class="live-dot">● えいぎょうちゅう</span></div>
+<div class="screen"><div class="screen-label">ただいまのうりあげ</div><div class="sales"><span id="money">0</span><small>えん</small></div><div class="screen-bottom"><span>のこり <b id="time">60</b> びょう</span><span>れんぞく <b id="streak">0</b> もん</span></div></div>
+<div class="register-body">
+<div class="receipt"><div class="receipt-title">きょうのチャレンジ</div><div class="receipt-line">しょうひん：九九のこたえ</div><div class="receipt-question" id="question">1 × 1 ＝ ？</div><div id="feedback">こたえをいれてね！</div></div>
+<div class="input-display"><span>にゅうりょく</span><div id="answer">＿</div></div>
+<div class="keypad">
+<button class="digit">7</button><button class="digit">8</button><button class="digit">9</button>
+<button class="digit">4</button><button class="digit">5</button><button class="digit">6</button>
+<button class="digit">1</button><button class="digit">2</button><button class="digit">3</button>
+<button id="clear" class="key-clear">けす</button><button class="digit">0</button><button id="back" class="key-back">1けたけす</button>
+</div>
+<button id="submit" class="enter-button">これでいいよ！</button>
+</div></div></section>
+<section id="result" class="panel" hidden>
+<div class="menu-icon">🎉</div><h2>おつかれさまでした！</h2>
+<div class="result-receipt"><div class="receipt-title">九九マーケット レシート</div><div class="receipt-line">きょうのうりあげ</div><div class="total"><span id="finalMoney">0</span>えん</div><div class="receipt-line">おかいあげ ありがとう！</div><div class="receipt-line" id="resultMessage"></div><div class="receipt-end">＊＊＊＊＊＊＊＊＊＊＊＊</div></div>
+<button id="retry" class="answer-button wide">もういちどチャレンジ！</button><button id="backMenu" class="utility wide">コースえらびにもどる</button>
+</section></div>
+<script>
+(() => {
+const menu=document.getElementById("menu"),play=document.getElementById("play"),result=document.getElementById("result");
+const timeEl=document.getElementById("time"),moneyEl=document.getElementById("money"),streakEl=document.getElementById("streak"),questionEl=document.getElementById("question"),answerEl=document.getElementById("answer"),feedbackEl=document.getElementById("feedback");
+let questions=[],index=0,money=0,streak=0,timeLeft=60,timer=null,currentMode="forward",inputValue="",playing=false;
+function makeQuestions(mode){const list=[];for(let a=1;a<=9;a++)for(let b=1;b<=9;b++)list.push({a,b});if(mode==="reverse")list.reverse();if(mode==="random"){for(let i=list.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[list[i],list[j]]=[list[j],list[i]];}}return list;}
+function updateStats(){timeEl.textContent=timeLeft;moneyEl.textContent=money.toLocaleString("ja-JP");streakEl.textContent=streak;}
+function showInput(){answerEl.textContent=inputValue||"＿";}
+function showQuestion(){if(index>=questions.length){finish("九九をぜんぶせいかいしたよ！すごい！");return;}const q=questions[index];questionEl.textContent=`${q.a} × ${q.b} ＝ ？`;inputValue="";showInput();feedbackEl.textContent="こたえをいれてね！";}
+function start(mode){clearInterval(timer);currentMode=mode;questions=makeQuestions(mode);index=0;money=0;streak=0;timeLeft=60;inputValue="";playing=true;menu.hidden=true;result.hidden=true;play.hidden=false;updateStats();showQuestion();timer=setInterval(()=>{if(!playing)return;timeLeft--;updateStats();if(timeLeft<=0)finish("じかんいっぱいまでよくがんばったね！");},1000);}
+function submitAnswer(){if(!playing)return;if(inputValue===""){feedbackEl.textContent="すうじをおしてね！";return;}const q=questions[index],answer=Number(inputValue);if(answer===q.a*q.b){const reward=q.a<=3?100:q.a<=6?150:200;money+=reward;streak++;let message=`せいかい！ ＋${reward}えん`;if(streak%5===0){timeLeft++;message+="　ボーナス＋1びょう！";}feedbackEl.textContent=message;index++;updateStats();if(index<questions.length)showQuestion();else finish("九九をぜんぶせいかいしたよ！すごい！");}else{streak=0;inputValue="";showInput();feedbackEl.textContent="おしい！もういちどかんがえてみよう。";updateStats();}}
+function finish(message){if(!playing)return;playing=false;clearInterval(timer);play.hidden=true;result.hidden=false;document.getElementById("finalMoney").textContent=money.toLocaleString("ja-JP");document.getElementById("resultMessage").textContent=message;}
+document.querySelectorAll(".mode").forEach(button=>button.addEventListener("click",()=>start(button.dataset.mode)));
+document.querySelectorAll(".digit").forEach(button=>button.addEventListener("click",()=>{if(!playing||inputValue.length>=2)return;inputValue+=button.textContent;showInput();feedbackEl.textContent="";}));
+document.getElementById("clear").addEventListener("click",()=>{if(!playing)return;inputValue="";showInput();feedbackEl.textContent="";});
+document.getElementById("back").addEventListener("click",()=>{if(!playing)return;inputValue=inputValue.slice(0,-1);showInput();});
+document.getElementById("submit").addEventListener("click",submitAnswer);
+document.getElementById("retry").addEventListener("click",()=>start(currentMode));
+document.getElementById("backMenu").addEventListener("click",()=>{clearInterval(timer);playing=false;result.hidden=true;menu.hidden=false;});
+})();
+</script>
+</body></html>
